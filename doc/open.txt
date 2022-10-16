@@ -40,6 +40,9 @@ M.open({text})                                                       *open.open*
 
 M.open_cword()                                                 *open.open_cword*
     Alias for open.open(vim.fn.expand('<cWORD>'))
+    @usage[[
+    vim.keymap.set('n', 'gx', require('open').open_cword)
+    @usage]]
 
 
 ================================================================================
@@ -50,11 +53,7 @@ The default openers that comes with the plugin
 An opener is a function that receives a text to process and returns a uri to open.
 Return nil to do nothing (skip to the next opener)
 
-M.github({text})                                   *open.default_openers.github*
-     Open GitHub repo shorthand in GitHub
-
-    Parameters: ~
-        {text}  (string)  looking for {github_user}/{repo}
+M.github()                                         *open.default_openers.github*
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:
