@@ -13,8 +13,7 @@ local curl = require('plenary.curl')
 ---@param text string text to look for {github_user}/{repo}
 ---@return string|nil _ https://github.com/{github_user}/{repo}
 M.github = function(text)
-    local github_shorthand = string.match(text, '[%w_-%.]+/[%w_-%.]+')
-    vim.pretty_print(github_shorthand)
+    local github_shorthand = string.match(text, '[%w_%-%.]+/[%w_%-%.]+')
     if github_shorthand == nil then
         return nil
     end
@@ -31,6 +30,13 @@ M.github = function(text)
     end
 
     return body.html_url
+end
+
+--- Open URLs (useful to strip quotes and such from URLs)
+---@param text string text to look for valid URL
+---@return string|nil _ the URL
+M.url = function(text)
+    return text:match("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w%.]+")
 end
 
 return M
