@@ -5,7 +5,7 @@ E.g: Open GitHub shorthand `"ofirgall/open.nvim"` at your default browser.
 
 ## Installation
 ```lua
-use 'ofirgall/open.nvim'
+use { 'ofirgall/open.nvim', requires = 'nvim-lua/plenary.nvim' }
 ```
 
 ## Usage
@@ -60,3 +60,6 @@ require('open').setup {
     openers = openers
 }
 ```
+
+# Credits
+* [nvim-tree](https://github.com/nvim-tree/nvim-tree.lua) for the system opener module.
