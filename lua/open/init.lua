@@ -4,9 +4,8 @@ local system_open = require('open.system_open')
 
 local default_config = {
 	openers = require('open.default_openers'),
-	---@diagnostic disable-next-line: unused-local
 	fallback = function(text)
-		vim.api.nvim_feedkeys("gx<CR>", 'n', true)
+		system_open.open(text)
 	end,
 	system_open = {
 		cmd = "",
@@ -25,11 +24,11 @@ M.setup = function(config)
 end
 
 M.open = function(text)
-	for opener, opener_fn in pairs(loaded_config.openers) do
+	for _, opener_fn in pairs(loaded_config.openers) do
 		local res = opener_fn(text)
 		vim.pretty_print(res)
 		if res ~= nil then
-			system_open.fn(res)
+			system_open.open(res)
 			return
 		end
 	end

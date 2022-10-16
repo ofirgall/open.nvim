@@ -9,7 +9,7 @@ local M = {
 	},
 }
 
-function M.fn(uri)
+function M.open(uri)
 	if #M.config.system_open.cmd == 0 then
 		error("open.nvim: Cannot open file with system application. Unrecognized platform.")
 		return
