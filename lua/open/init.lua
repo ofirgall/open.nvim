@@ -26,7 +26,6 @@ end
 M.open = function(text)
 	for _, opener_fn in pairs(loaded_config.openers) do
 		local res = opener_fn(text)
-		vim.pretty_print(res)
 		if res ~= nil then
 			system_open.open(res)
 			return
