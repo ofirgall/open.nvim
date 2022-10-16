@@ -1,0 +1,60 @@
+================================================================================
+Introduction                                                         *open.nvim*
+
+System open current word from vim.
+For example: open 'ofirgall/open.nvim' in github in your browser.
+
+================================================================================
+Open                                                                      *open*
+
+M.setup({config})                                                   *open.setup*
+
+    Parameters: ~
+        {config}  (table)  user config
+
+    Usage: ~
+        >
+            -- Default config
+            require('open').setup {
+                 -- all the default openers
+                openers = require('open.default_openers'),
+                 -- fallback function if no opener succeeds
+                fallback = function(text)
+                    system_open.open(text)
+                end,
+                -- Override system opener, the defaults should work out of the box
+                system_open = {
+                    cmd = "",
+                    args = {},
+                },
+            }
+        <
+
+
+M.open({text})                                                       *open.open*
+    Process the text in the setup.openers
+
+    Parameters: ~
+        {text}  (string)  text to process
+
+
+M.open_cword()                                                 *open.open_cword*
+    Alias for open.open(vim.fn.expand('<cWORD>'))
+
+
+================================================================================
+Default Openers                                           *open.default_openers*
+
+The default openers that comes with the plugin
+
+An opener is a function that receives a text to process and returns a uri to open.
+Return nil to do nothing (skip to the next opener)
+
+M.github({text})                                   *open.default_openers.github*
+     Open GitHub repo shorthand in GitHub
+
+    Parameters: ~
+        {text}  (string)  looking for {github_user}/{repo}
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:
