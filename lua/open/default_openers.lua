@@ -13,7 +13,13 @@ local curl = require('plenary.curl')
 ---@param text string text to look for {github_user}/{repo}
 ---@return string|nil _ https://github.com/{github_user}/{repo}
 M.github = function(text)
-    local res = curl.get('https://api.github.com/repos/' .. text)
+    local github_shorthand = string.match(text, '[%w_-%.]+/[%w_-%.]+')
+    vim.pretty_print(github_shorthand)
+    if github_shorthand == nil then
+        return nil
+    end
+
+    local res = curl.get('https://api.github.com/repos/' .. github_shorthand)
 
     if res.status ~= 200 then
         return nil
