@@ -62,6 +62,9 @@ M.open = function(text)
 end
 
 ---Alias for open.open(vim.fn.expand('<cWORD>'))
+---@usage[[
+---vim.keymap.set('n', 'gx', require('open').open_cword)
+---@usage]]
 M.open_cword = function()
     M.open(vim.fn.expand('<cWORD>'))
 end
