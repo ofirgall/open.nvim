@@ -54,7 +54,7 @@ require('open').setup {
 ### Remove an existing opener
 ```lua
 local openers = require('open.default_openers')
-openers.url = nil -- Remove from dict
+openers.url = nil -- Remove from table
 
 require('open').setup {
     openers = openers
