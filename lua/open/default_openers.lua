@@ -36,7 +36,7 @@ end
 ---@param text string text to look for valid URL
 ---@return string|nil _ the URL
 M.url = function(text)
-    return text:match("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w%.]+")
+    return text:match("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w_%.%-]+")
 end
 
 return M
