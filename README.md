@@ -50,5 +50,10 @@ require('open').register_opener({
 })
 ```
 
+## List of Custom Openers
+* [ofirgall/open-jira.nvim](https://github.com/ofirgall/open-jira.nvim) - Open Jira tickets shorthand.
+
+Feel free to add your opener to the list.
+
 # Credits
 * [nvim-tree](https://github.com/nvim-tree/nvim-tree.lua) for the system opener module.
