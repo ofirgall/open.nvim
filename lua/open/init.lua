@@ -72,22 +72,38 @@ M.setup = function(config)
     system_open.setup(loaded_config)
 end
 
+---Open results
+---@param results string[] uris
+---@return boolean succeed
+local function open_results(results)
+    if results ~= nil then
+        local len = #results
+        if len == 0 then
+            return false
+        end
+
+        if len == 1 then
+            system_open.open(results[1])
+            return true
+        end
+
+        vim.ui.select(results, {}, function(item, index)
+            _ = index
+            system_open.open(item)
+        end)
+        return true
+    end
+
+    return false
+end
+
 ---Process the text in the openers
 ---@param text string text to process
 M.open = function(text)
     for _, opener in pairs(M.openers) do
         local results = opener.open_fn(text)
 
-        if results ~= nil then
-            if #results == 1 then
-                system_open.open(results[1])
-                return
-            end
-
-            vim.ui.select(results, {}, function(item, index)
-                _ = index
-                system_open.open(item)
-            end)
+        if open_results(results) then
             return
         end
     end
