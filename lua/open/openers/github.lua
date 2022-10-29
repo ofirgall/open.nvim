@@ -8,7 +8,7 @@ M.name = 'github'
 
 --- Open GitHub repo shorthand in GitHub
 ---@param text string text to look for {github_user}/{repo}
----@return string|nil _ https://github.com/{github_user}/{repo}
+---@return string[]|nil _ https://github.com/{github_user}/{repo}
 M.open_fn = function(text)
     local github_shorthand = string.match(text, '[%w_%-%.]+/[%w_%-%.]+')
     if github_shorthand == nil then
@@ -26,7 +26,7 @@ M.open_fn = function(text)
         return nil
     end
 
-    return body.html_url
+    return { body.html_url }
 end
 
 return M

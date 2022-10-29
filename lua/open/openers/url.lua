@@ -6,9 +6,14 @@ M.name = 'url'
 
 --- Open URLs
 ---@param text string text to look for valid URL
----@return string|nil _ the URL
+---@return string[]|nil _ the URL
 M.open_fn = function(text)
-    return text:match("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w_%.%-%~]+")
+    local urls = {}
+    for url in text:gmatch("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w_%.%-%~]+") do
+        table.insert(urls, url)
+    end
+
+    return urls
 end
 
 return M

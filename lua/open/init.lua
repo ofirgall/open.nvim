@@ -76,9 +76,18 @@ end
 ---@param text string text to process
 M.open = function(text)
     for _, opener in pairs(M.openers) do
-        local res = opener.open_fn(text)
-        if res ~= nil then
-            system_open.open(res)
+        local results = opener.open_fn(text)
+
+        if results ~= nil then
+            if #results == 1 then
+                system_open.open(results[1])
+                return
+            end
+
+            vim.ui.select(results, {}, function(item, index)
+                _ = index
+                system_open.open(item)
+            end)
             return
         end
     end

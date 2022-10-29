@@ -8,12 +8,15 @@ E.g: Open GitHub shorthand `"ofirgall/open.nvim"` at your default browser.
 use { 'ofirgall/open.nvim', requires = 'nvim-lua/plenary.nvim' }
 ```
 
+You can install `vim.ui.select` wrapper to change the ui for selecting multiple results:
+* [stevearc/dressing.nvim](https://github.com/stevearc/dressing.nvim)
+* [nvim-telescope/telescope-ui-select.nvim](https://github.com/nvim-telescope/telescope-ui-select.nvim)
+
 ## Usage
 ```lua
 -- Leave empty for default values
 require('open').setup {
 }
-
 
 require('open').setup {
      -- List of disabled openers, 'github' for example see `:help open.default_openers`
