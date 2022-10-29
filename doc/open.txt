@@ -98,7 +98,7 @@ M.open_fn({text})                                  *open.openers.github.open_fn*
         {text}  (string)  text to look for {github_user}/{repo}
 
     Returns: ~
-        {string|nil}  https://github.com/{github_user}/{repo}
+        {string[]|nil}  https://github.com/{github_user}/{repo}
 
 
 ================================================================================
@@ -117,7 +117,7 @@ M.open_fn({text})                                     *open.openers.url.open_fn*
         {text}  (string)  text to look for valid URL
 
     Returns: ~
-        {string|nil}  the URL
+        {string[]|nil}  the URL
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:
