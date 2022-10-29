@@ -4,13 +4,16 @@
 ---For example: open 'ofirgall/open.nvim' in github in your browser.
 ---@brief ]]
 
+---@toc open.table-of-contents
+
 ---@mod open Open
 local M = {}
 
 local system_open = require('open.system_open')
 
 local default_config = {
-    openers = require('open.default_openers'),
+    disabled_openers = {
+    },
     fallback = function(text)
         system_open.open(text)
     end,
@@ -22,13 +25,20 @@ local default_config = {
 
 local loaded_config = default_config
 
+---@type Opener[]
+local DEFAULT_OPENERS = {
+    require('open.openers.github'),
+    require('open.openers.url'),
+}
+
 ---@param config table user config
 ---@usage [[
 ----- Default config
 ---require('open').setup {
----     -- all the default openers
----    openers = require('open.default_openers'),
----     -- fallback function if no opener succeeds
+---    -- List of disabled openers, 'github' for example see `open.default_openers`
+---    disabled_openers = {
+---    }
+---    -- fallback function if no opener succeeds
 ---    fallback = function(text)
 ---        system_open.open(text)
 ---    end,
@@ -43,15 +53,30 @@ M.setup = function(config)
     config = config or {}
     config = vim.tbl_deep_extend('keep', config, default_config)
 
+    -- Register default openers
+    for _, opener in ipairs(DEFAULT_OPENERS) do
+        local disabled = false
+        for _, disabled_opener in ipairs(config.disabled_openers) do
+            if opener.name == disabled_opener then
+                disabled = true
+                break
+            end
+        end
+
+        if not disabled then
+            M.register_opener(opener)
+        end
+    end
+
     loaded_config = config
     system_open.setup(loaded_config)
 end
 
----Process the text in the setup.openers
+---Process the text in the openers
 ---@param text string text to process
 M.open = function(text)
-    for _, opener_fn in pairs(loaded_config.openers) do
-        local res = opener_fn(text)
+    for _, opener in pairs(M.openers) do
+        local res = opener.open_fn(text)
         if res ~= nil then
             system_open.open(res)
             return
@@ -62,11 +87,34 @@ M.open = function(text)
 end
 
 ---Alias for open.open(vim.fn.expand('<cWORD>'))
----@usage[[
----vim.keymap.set('n', 'gx', require('open').open_cword)
----@usage]]
+---@usage `vim.keymap.set('n', 'gx', require('open').open_cword)`
 M.open_cword = function()
     M.open(vim.fn.expand('<cWORD>'))
+end
+
+---@class Opener
+---@field name string Name of the opener.
+---@field open_fn fun(text: string): string[] Function to process text to uris. Returns the uri's to open or nil to do nothing (skips to the next opener).
+
+M.openers = {}
+
+---Register an opener.
+---
+---@param opener Opener
+---@usage[[
+---M.register_opener({
+---    name = 'Example Opener',
+---    open_fn = function(text)
+---        return { 'www.example.org' }
+---    end
+---})
+---@usage]]
+M.register_opener = function(opener)
+    assert(type(opener) == 'table', 'opener: expected table but got ' .. type(opener))
+    assert(type(opener.name) == 'string', 'opener.name: expected string but got ' .. type(opener.name))
+    assert(type(opener.open_fn) == 'function', 'opener.open_fn: expected function but got ' .. type(opener.open_fn))
+
+    table.insert(M.openers, opener)
 end
 
 return M

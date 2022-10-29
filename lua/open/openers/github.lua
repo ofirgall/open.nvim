@@ -1,18 +1,15 @@
----@mod open.default_openers Default Openers
----@brief [[
----The default openers that comes with the plugin
----
----An opener is a function that receives a text to process and returns a uri to open.
----Return nil to do nothing (skip to the next opener)
----@brief ]]
+---@mod open.openers.github GitHub shorthand opener.
 local M = {}
 
 local curl = require('plenary.curl')
 
+---@type string The name of the opener: `github`
+M.name = 'github'
+
 --- Open GitHub repo shorthand in GitHub
 ---@param text string text to look for {github_user}/{repo}
 ---@return string|nil _ https://github.com/{github_user}/{repo}
-M.github = function(text)
+M.open_fn = function(text)
     local github_shorthand = string.match(text, '[%w_%-%.]+/[%w_%-%.]+')
     if github_shorthand == nil then
         return nil
@@ -30,13 +27,6 @@ M.github = function(text)
     end
 
     return body.html_url
-end
-
---- Open URLs (useful to strip quotes and such from URLs)
----@param text string text to look for valid URL
----@return string|nil _ the URL
-M.url = function(text)
-    return text:match("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w_%.%-%~]+")
 end
 
 return M

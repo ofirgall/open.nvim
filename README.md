@@ -16,8 +16,9 @@ require('open').setup {
 
 
 require('open').setup {
-     -- all the default openers, see below how to add/remove
-    openers = require('open.default_openers'),
+     -- List of disabled openers, 'github' for example see `:help open.default_openers`
+     disabled_openers = {
+     }
      -- fallback function if no opener succeeds
     fallback = function(text)
         system_open.open(text)
@@ -35,30 +36,15 @@ By default, no keymaps are set, you have to set your own keymap:
 vim.keymap.set('n', 'gx', require('open').open_cword)
 ```
 
-### Add a custom opener
+### Register a custom opener
 Please share awesome custom openers with PR.
 ```lua
-local openers = require('open.default_openers')
-openers.my_custom_opener = function(text)
-    -- Process text here
-
-    -- Return uri to open
-    return "www.example.com"
-end
-
-require('open').setup {
-    openers = openers
-}
-```
-
-### Remove an existing opener
-```lua
-local openers = require('open.default_openers')
-openers.url = nil -- Remove from table
-
-require('open').setup {
-    openers = openers
-}
+require('open').register_opener({
+    name = 'Example Opener',
+    open_fn = function(text)
+        return { 'www.example.org' }
+    end
+})
 ```
 
 # Credits

@@ -5,6 +5,15 @@ System open current word from vim.
 For example: open 'ofirgall/open.nvim' in github in your browser.
 
 ================================================================================
+Table of Contents                                       *open.table-of-contents*
+
+Introduction·························································|open.nvim|
+Open······································································|open|
+The built in openers······································|open.default_openers|
+GitHub shorthand opener.···································|open.openers.github|
+Open URLs (useful to strip quotes and such from URLs)·········|open.openers.url|
+
+================================================================================
 Open                                                                      *open*
 
 M.setup({config})                                                   *open.setup*
@@ -16,9 +25,10 @@ M.setup({config})                                                   *open.setup*
         >
             -- Default config
             require('open').setup {
-                 -- all the default openers
-                openers = require('open.default_openers'),
-                 -- fallback function if no opener succeeds
+                -- List of disabled openers, 'github' for example see `open.default_openers`
+                disabled_openers = {
+                }
+                -- fallback function if no opener succeeds
                 fallback = function(text)
                     system_open.open(text)
                 end,
@@ -32,7 +42,7 @@ M.setup({config})                                                   *open.setup*
 
 
 M.open({text})                                                       *open.open*
-    Process the text in the setup.openers
+    Process the text in the openers
 
     Parameters: ~
         {text}  (string)  text to process
@@ -40,20 +50,48 @@ M.open({text})                                                       *open.open*
 
 M.open_cword()                                                 *open.open_cword*
     Alias for open.open(vim.fn.expand('<cWORD>'))
-    @usage[[
-    vim.keymap.set('n', 'gx', require('open').open_cword)
-    @usage]]
+
+    Usage: ~
+        >
+            vim.keymap.set('n', 'gx', require('open').open_cword)
+        <
+
+
+Opener                                                             *open.Opener*
+
+    Fields: ~
+        {name}     (string)                     Name of the opener.
+        {open_fn}  (fun(text:string):string[])  Function to process text to uris. Returns the uri's to open or nil to do nothing (skips to the next opener).
+
+
+M.register_opener({opener})                               *open.register_opener*
+    Register an opener.
+
+
+    Parameters: ~
+        {opener}  (Opener)  @usage[[
+                            M.register_opener({
+                                name = 'Example Opener',
+                                open_fn = function(text)
+                                    return { 'www.example.org' }
+                                end
+                            })
+                            @usage]]
 
 
 ================================================================================
-Default Openers                                           *open.default_openers*
+The built in openers                                      *open.default_openers*
 
-The default openers that comes with the plugin
+================================================================================
+GitHub shorthand opener.                                   *open.openers.github*
 
-An opener is a function that receives a text to process and returns a uri to open.
-Return nil to do nothing (skip to the next opener)
+M.name                                                *open.openers.github.name*
 
-M.github({text})                                   *open.default_openers.github*
+    Type: ~
+        (string)  The name of the opener: `github`
+
+
+M.open_fn({text})                                  *open.openers.github.open_fn*
      Open GitHub repo shorthand in GitHub
 
     Parameters: ~
@@ -63,8 +101,17 @@ M.github({text})                                   *open.default_openers.github*
         {string|nil}  https://github.com/{github_user}/{repo}
 
 
-M.url({text})                                         *open.default_openers.url*
-     Open URLs (useful to strip quotes and such from URLs)
+================================================================================
+Open URLs (useful to strip quotes and such from URLs)         *open.openers.url*
+
+M.name                                                   *open.openers.url.name*
+
+    Type: ~
+        (string)  The name of the opener: `uri`
+
+
+M.open_fn({text})                                     *open.openers.url.open_fn*
+     Open URLs
 
     Parameters: ~
         {text}  (string)  text to look for valid URL

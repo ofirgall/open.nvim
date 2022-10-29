@@ -1,1 +1,1 @@
-lemmy-help --prefix-func --prefix-alias --prefix-class --prefix-type lua/open/init.lua lua/open/default_openers.lua > doc/open.txt
+lemmy-help --prefix-func --prefix-alias --prefix-class --prefix-type lua/open/init.lua lua/open/openers/init.lua $(ls lua/open/openers/ | grep -v init.lua| xargs -I{} echo lua/open/openers/{} | xargs) > doc/open.txt
