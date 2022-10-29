@@ -1,5 +1,5 @@
 # open.nvim
-Open the current word (or other text) with custom openers.
+Open the current word (or other text) with custom openers, extensible.
 
 E.g: Open GitHub shorthand `"ofirgall/open.nvim"` at your default browser.
 
