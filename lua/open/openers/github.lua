@@ -1,7 +1,7 @@
 ---@mod open.openers.github GitHub shorthand opener.
 local M = {}
 
-local curl = require('plenary.curl')
+local curl = require('open.common.curl')
 
 ---@type string The name of the opener: `github`
 M.name = 'github'

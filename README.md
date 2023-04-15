@@ -31,6 +31,10 @@ require('open').setup {
         cmd = "",
         args = {},
     },
+    -- Options to pass to plenary.curl
+    curl_opts = {
+        -- compressed = false -- Uncomment this line to disable curl compression
+    },
 }
 ```
 

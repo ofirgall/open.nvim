@@ -21,6 +21,8 @@ local default_config = {
         cmd = "",
         args = {},
     },
+    curl_opts = {
+    },
 }
 
 local loaded_config = default_config
@@ -47,6 +49,10 @@ local DEFAULT_OPENERS = {
 ---        cmd = "",
 ---        args = {},
 ---    },
+---    -- Options to pass to plenary.curl
+---    curl_opts = {
+---        -- compressed = false -- Uncomment this line to disable curl compression
+---    },
 ---}
 ---@usage ]]
 M.setup = function(config)
@@ -70,6 +76,7 @@ M.setup = function(config)
 
     loaded_config = config
     system_open.setup(loaded_config)
+    require('open.common.curl').setup(loaded_config.curl_opts)
 end
 
 ---Open results
