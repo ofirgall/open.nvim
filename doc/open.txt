@@ -1,19 +1,19 @@
-================================================================================
+==============================================================================
 Introduction                                                         *open.nvim*
 
 System open current word from vim.
 For example: open 'ofirgall/open.nvim' in github in your browser.
 
-================================================================================
+==============================================================================
 Table of Contents                                       *open.table-of-contents*
 
-Introduction·························································|open.nvim|
-Open······································································|open|
-The built in openers······································|open.default_openers|
-GitHub shorthand opener.···································|open.openers.github|
-Open URLs (useful to strip quotes and such from URLs)·········|open.openers.url|
+Introduction ······················································· |open.nvim|
+Open ···································································· |open|
+The built in openers ···································· |open.default_openers|
+GitHub shorthand opener. ································· |open.openers.github|
+Open URLs (useful to strip quotes and such from URLs) ······· |open.openers.url|
 
-================================================================================
+==============================================================================
 Open                                                                      *open*
 
 M.setup({config})                                                   *open.setup*
@@ -22,23 +22,27 @@ M.setup({config})                                                   *open.setup*
         {config}  (table)  user config
 
     Usage: ~
-        >
-            -- Default config
-            require('open').setup {
-                -- List of disabled openers, 'github' for example see `open.default_openers`
-                disabled_openers = {
-                }
-                -- fallback function if no opener succeeds
-                fallback = function(text)
-                    system_open.open(text)
-                end,
-                -- Override system opener, the defaults should work out of the box
-                system_open = {
-                    cmd = "",
-                    args = {},
-                },
+>lua
+        -- Default config
+        require('open').setup {
+            -- List of disabled openers, 'github' for example see `open.default_openers`
+            disabled_openers = {
             }
-        <
+            -- fallback function if no opener succeeds
+            fallback = function(text)
+                system_open.open(text)
+            end,
+            -- Override system opener, the defaults should work out of the box
+            system_open = {
+                cmd = "",
+                args = {},
+            },
+            -- Options to pass to plenary.curl
+            curl_opts = {
+                -- compressed = false -- Uncomment this line to disable curl compression
+            },
+        }
+<
 
 
 M.open({text})                                                       *open.open*
@@ -52,9 +56,9 @@ M.open_cword()                                                 *open.open_cword*
     Alias for open.open(vim.fn.expand('<cWORD>'))
 
     Usage: ~
-        >
-            vim.keymap.set('n', 'gx', require('open').open_cword)
-        <
+>lua
+        vim.keymap.set('n', 'gx', require('open').open_cword)
+<
 
 
 Opener                                                             *open.Opener*
@@ -79,10 +83,10 @@ M.register_opener({opener})                               *open.register_opener*
                             @usage]]
 
 
-================================================================================
+==============================================================================
 The built in openers                                      *open.default_openers*
 
-================================================================================
+==============================================================================
 GitHub shorthand opener.                                   *open.openers.github*
 
 M.name                                                *open.openers.github.name*
@@ -98,10 +102,10 @@ M.open_fn({text})                                  *open.openers.github.open_fn*
         {text}  (string)  text to look for {github_user}/{repo}
 
     Returns: ~
-        {string[]|nil}  https://github.com/{github_user}/{repo}
+        (string[]|nil)  https://github.com/{github_user}/{repo}
 
 
-================================================================================
+==============================================================================
 Open URLs (useful to strip quotes and such from URLs)         *open.openers.url*
 
 M.name                                                   *open.openers.url.name*
@@ -117,7 +121,7 @@ M.open_fn({text})                                     *open.openers.url.open_fn*
         {text}  (string)  text to look for valid URL
 
     Returns: ~
-        {string[]|nil}  the URL
+        (string[]|nil)  the URL
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:
