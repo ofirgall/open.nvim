@@ -9,7 +9,7 @@ M.name = 'url'
 ---@return string[]|nil _ the URL
 M.open_fn = function(text)
     local urls = {}
-    for url in text:gmatch("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w_%.%-%~]+") do
+    for url in text:gmatch("[http://][https://][http://www.][https://www.]+%w+%.%w+[/%w_%.%-%~%?%+%%&#=:]+") do
         table.insert(urls, url)
     end
 
