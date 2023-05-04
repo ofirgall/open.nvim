@@ -9,15 +9,19 @@ local M = {
     },
 }
 
-function M.open(uri)
+function M.open(uri, opts)
     if #M.config.system_open.cmd == 0 then
         error("open.nvim: Cannot open file with system application. Unrecognized platform.")
         return
     end
 
+    opts = opts or {}
+    local cmd = opts['cmd'] or M.config.system_open.cmd
+    local args = opts['args'] or M.config.system_open.args
+
     local process = {
-        cmd = M.config.system_open.cmd,
-        args = M.config.system_open.args,
+        cmd = cmd,
+        args = args,
         errors = "\n",
         stderr = uv.new_pipe(false),
     }
@@ -52,7 +56,7 @@ function M.open(uri)
 end
 
 function M.setup(opts)
-    M.config.system_open = opts.system_open or {}
+    M.config.system_open = opts.config.system_open or {}
 
     if #M.config.system_open.cmd == 0 then
         if M.config.is_windows then
