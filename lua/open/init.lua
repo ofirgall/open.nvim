@@ -111,7 +111,6 @@ local function open_results(opener, results)
         end
 
         local opts = loaded_config.openers_config[opener.name] or {}
-        vim.print(opener.name)
         if len == 1 then
             system_open.open(results[1], opts['system_open'])
             return true
