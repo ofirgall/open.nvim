@@ -9,13 +9,13 @@ M.name = 'github'
 --- Open GitHub repo shorthand in GitHub
 ---@param text string text to look for {github_user}/{repo}
 ---@return string[]|nil _ https://github.com/{github_user}/{repo}
-M.open_fn = function(text)
+M.open_fn = function(text, opts)
     local github_shorthand = string.match(text, '[%w_%-%.]+/[%w_%-%.]+')
     if github_shorthand == nil then
         return nil
     end
 
-    local res = curl.get('https://api.github.com/repos/' .. github_shorthand)
+    local res = curl.get('https://api.github.com/repos/' .. github_shorthand, opts.curl)
 
     if res.status ~= 200 then
         return nil

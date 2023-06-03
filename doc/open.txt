@@ -16,30 +16,41 @@ Open URLs (useful to strip quotes and such from URLs) ······· |open.opene
 ==============================================================================
 Open                                                                      *open*
 
-M.setup({config})                                                   *open.setup*
+M.setup({opts})                                                     *open.setup*
 
     Parameters: ~
-        {config}  (table)  user config
+        {opts}  (table)  user config
 
     Usage: ~
 >lua
         -- Default config
         require('open').setup {
-            -- List of disabled openers, 'github' for example see `open.default_openers`
+            config = {
+                -- Override system opener, the defaults should work out of the box
+                system_open = {
+                    cmd = "",
+                    args = {},
+                },
+                -- Options to pass to plenary.curl
+                curl_opts = {
+                    -- compressed = false -- Uncomment this line to disable curl compression
+                },
+            },
+            -- List of disabled openers, 'github' for example see `:help open.default_openers`
             disabled_openers = {
-            }
+            },
             -- fallback function if no opener succeeds
             fallback = function(text)
                 system_open.open(text)
             end,
-            -- Override system opener, the defaults should work out of the box
-            system_open = {
-                cmd = "",
-                args = {},
-            },
-            -- Options to pass to plenary.curl
-            curl_opts = {
-                -- compressed = false -- Uncomment this line to disable curl compression
+            -- Override `config` per opener
+            openers_config = {
+                -- Override `jira` browser for example
+                ['jira'] = {
+                    system_open = {
+                        cmd = 'chromium-browser',
+                    },
+                },
             },
         }
 <
@@ -64,8 +75,8 @@ M.open_cword()                                                 *open.open_cword*
 Opener                                                             *open.Opener*
 
     Fields: ~
-        {name}     (string)                     Name of the opener.
-        {open_fn}  (fun(text:string):string[])  Function to process text to uris. Returns the uri's to open or nil to do nothing (skips to the next opener).
+        {name}     (string)                                Name of the opener.
+        {open_fn}  (fun(text:string,opts:table):string[])  Function to process text to uris. Returns the uri's to open or nil to do nothing (skips to the next opener).
 
 
 M.register_opener({opener})                               *open.register_opener*
@@ -76,7 +87,7 @@ M.register_opener({opener})                               *open.register_opener*
         {opener}  (Opener)  @usage[[
                             M.register_opener({
                                 name = 'Example Opener',
-                                open_fn = function(text)
+                                open_fn = function(text, opts)
                                     return { 'www.example.org' }
                                 end
                             })

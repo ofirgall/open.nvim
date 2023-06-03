@@ -19,21 +19,32 @@ require('open').setup {
 }
 
 require('open').setup {
-     -- List of disabled openers, 'github' for example see `:help open.default_openers`
-     disabled_openers = {
-     }
-     -- fallback function if no opener succeeds
+    config = {
+        -- Override system opener, the defaults should work out of the box
+        system_open = {
+            cmd = "",
+            args = {},
+        },
+        -- Options to pass to plenary.curl
+        curl_opts = {
+            -- compressed = false -- Uncomment this line to disable curl compression
+        },
+    },
+    -- List of disabled openers, 'github' for example see `:help open.default_openers`
+    disabled_openers = {
+    },
+    -- fallback function if no opener succeeds
     fallback = function(text)
         system_open.open(text)
     end,
-    -- Override system opener, the defaults should work out of the box
-    system_open = {
-        cmd = "",
-        args = {},
-    },
-    -- Options to pass to plenary.curl
-    curl_opts = {
-        -- compressed = false -- Uncomment this line to disable curl compression
+    -- Override `config` per opener
+    openers_config = {
+        -- Override `jira` browser for example
+        ['jira'] = {
+            system_open = {
+                cmd = 'chromium-browser',
+            },
+        },
     },
 }
 ```
