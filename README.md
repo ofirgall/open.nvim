@@ -13,7 +13,7 @@ You can install `vim.ui.select` wrapper to change the ui for selecting multiple 
 * [nvim-telescope/telescope-ui-select.nvim](https://github.com/nvim-telescope/telescope-ui-select.nvim)
 
 ### Troubleshoot
-- [Timeout/write error on Termux]([https://github.com/ofirgall/open.nvim/issues/7](https://github.com/ofirgall/open.nvim/issues/7#issuecomment-1614663519))
+- [Timeout/write error on Termux](https://github.com/ofirgall/open.nvim/issues/7#issuecomment-1614663519)
 
 ## Usage
 ```lua
