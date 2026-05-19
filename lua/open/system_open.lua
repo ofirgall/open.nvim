@@ -35,7 +35,9 @@ function M.open(uri, opts)
             process.handle:close()
             if code ~= 0 then
                 process.errors = process.errors .. string.format("open.nvim system_open: return code %d.", code)
-                error(process.errors)
+                vim.schedule(function()
+                    vim.notify(process.errors, vim.log.levels.WARN)
+                end)
             end
         end
     )

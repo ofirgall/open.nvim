@@ -143,7 +143,9 @@ end
 ---Alias for open.open(vim.fn.expand('<cWORD>'))
 ---@usage `vim.keymap.set('n', 'gx', require('open').open_cword)`
 M.open_cword = function()
-    M.open(vim.fn.expand('<cWORD>'))
+    local text = vim.fn.expand('<cWORD>')
+    text = text:gsub('[%.,;:!%?%)%]]+$', '')
+    M.open(text)
 end
 
 ---@class Opener
