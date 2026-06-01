@@ -129,6 +129,7 @@ end
 ---Process the text in the openers
 ---@param text string text to process
 M.open = function(text)
+    text = vim.fn.expand(text)
     for _, opener in pairs(M.openers) do
         local results = opener.open_fn(text, loaded_config.config)
 
