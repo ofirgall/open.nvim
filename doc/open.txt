@@ -56,11 +56,32 @@ M.setup({opts})                                                     *open.setup*
 <
 
 
+M.extract_table_cell_text()                       *open.extract_table_cell_text*
+     Extract joined text from a table cell spanning multiple lines around the cursor.
+     Returns the joined cell text, or nil if the cursor is not in a recognizable table cell.
+
+    Returns: ~
+        (string|nil)
+
+
 M.open({text})                                                       *open.open*
     Process the text in the openers
 
     Parameters: ~
         {text}  (string)  text to process
+
+
+M.file_under_cursor()                                   *open.file_under_cursor*
+    Returns the file path under the cursor, joining multiline table cells when applicable.
+    Falls back to `<cfile>`.
+
+    Returns: ~
+        (string)
+
+    Usage: ~
+>lua
+        vim.keymap.set('n', 'gf', function() vim.cmd('edit ' .. require('open').file_under_cursor()) end)
+<
 
 
 M.open_cword()                                                 *open.open_cword*
