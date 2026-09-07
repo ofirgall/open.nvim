@@ -126,24 +126,134 @@ local function open_results(opener, results)
     return false
 end
 
----Process the text in the openers
+---Try all registered openers on text, return true if one succeeded.
 ---@param text string text to process
-M.open = function(text)
+---@return boolean succeed
+local function try_open(text)
     text = vim.fn.expand(text)
     for _, opener in pairs(M.openers) do
         local results = opener.open_fn(text, loaded_config.config)
-
         if open_results(opener, results) then
-            return
+            return true
+        end
+    end
+    return false
+end
+
+--- Find all pipe characters (│ or |) in a line with both byte positions and display columns.
+---@param l string
+---@return {byte_s: integer, byte_e: integer, vcol: integer}[]
+local function pipe_positions(l)
+    local pipes = {}
+    local pos = 1
+    while pos <= #l do
+        if pos + 2 <= #l and l:sub(pos, pos + 2) == '│' then
+            local vcol = vim.fn.strdisplaywidth(l:sub(1, pos - 1))
+            table.insert(pipes, { byte_s = pos, byte_e = pos + 2, vcol = vcol })
+            pos = pos + 3
+        elseif l:sub(pos, pos) == '|' then
+            local vcol = vim.fn.strdisplaywidth(l:sub(1, pos - 1))
+            table.insert(pipes, { byte_s = pos, byte_e = pos, vcol = vcol })
+            pos = pos + 1
+        else
+            pos = pos + 1
+        end
+    end
+    return pipes
+end
+
+--- Given a line and target display-column pair, find the byte range between those pipes.
+---@return integer|nil left_byte
+---@return integer|nil right_byte
+local function cell_byte_range(l, left_vcol, right_vcol)
+    local pipes = pipe_positions(l)
+    local lb, rb
+    for _, p in ipairs(pipes) do
+        if p.vcol == left_vcol then lb = p.byte_e + 1 end
+        if p.vcol == right_vcol then rb = p.byte_s - 1 end
+    end
+    return lb, rb
+end
+
+--- Extract joined text from a table cell spanning multiple lines around the cursor.
+--- Returns the joined cell text, or nil if the cursor is not in a recognizable table cell.
+---@return string|nil
+local function extract_table_cell_text()
+    local row = vim.fn.line('.')
+    local byte_col = vim.fn.col('.')
+    local line = vim.api.nvim_get_current_line()
+
+    local pipes = pipe_positions(line)
+    if #pipes < 2 then return nil end
+
+    local left_vcol, right_vcol
+    for i = 1, #pipes - 1 do
+        if byte_col > pipes[i].byte_e and byte_col < pipes[i + 1].byte_s then
+            left_vcol = pipes[i].vcol
+            right_vcol = pipes[i + 1].vcol
+            break
+        end
+    end
+    if not left_vcol or not right_vcol then return nil end
+
+    local separator_chars = { '─', '┼', '├', '┤', '┬', '┴', '═', '╪', '┌', '┐', '└', '┘' }
+    local function is_separator(cell)
+        local stripped = cell
+        for _, ch in ipairs(separator_chars) do
+            stripped = stripped:gsub(ch, '')
+        end
+        stripped = stripped:gsub('[%-%+= ]', '')
+        return #stripped == 0
+    end
+
+    local start_row = row
+    for r = row - 1, math.max(1, row - 50), -1 do
+        local l = vim.fn.getline(r)
+        local lb, rb = cell_byte_range(l, left_vcol, right_vcol)
+        if not lb or not rb then break end
+        if is_separator(l:sub(lb, rb)) then break end
+        start_row = r
+    end
+
+    local end_row = row
+    for r = row + 1, math.min(vim.fn.line('$'), row + 50) do
+        local l = vim.fn.getline(r)
+        local lb, rb = cell_byte_range(l, left_vcol, right_vcol)
+        if not lb or not rb then break end
+        if is_separator(l:sub(lb, rb)) then break end
+        end_row = r
+    end
+
+    local parts = {}
+    for r = start_row, end_row do
+        local l = vim.fn.getline(r)
+        local lb, rb = cell_byte_range(l, left_vcol, right_vcol)
+        local cell = vim.trim(l:sub(lb, rb))
+        if #cell > 0 then
+            table.insert(parts, cell)
         end
     end
 
-    loaded_config.fallback(text)
+    if #parts == 0 then return nil end
+    return table.concat(parts, '')
+end
+
+---Process the text in the openers
+---@param text string text to process
+M.open = function(text)
+    if not try_open(text) then
+        loaded_config.fallback(text)
+    end
 end
 
 ---Alias for open.open(vim.fn.expand('<cWORD>'))
 ---@usage `vim.keymap.set('n', 'gx', require('open').open_cword)`
 M.open_cword = function()
+    local cell_text = extract_table_cell_text()
+    if cell_text and try_open(cell_text) then
+        return
+    end
+
     local text = vim.fn.expand('<cWORD>')
     text = text:gsub('[%.,;:!%?%)%]]+$', '')
     M.open(text)
