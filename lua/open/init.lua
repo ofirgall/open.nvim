@@ -178,7 +178,7 @@ end
 --- Extract joined text from a table cell spanning multiple lines around the cursor.
 --- Returns the joined cell text, or nil if the cursor is not in a recognizable table cell.
 ---@return string|nil
-local function extract_table_cell_text()
+function M.extract_table_cell_text()
     local row = vim.fn.line('.')
     local byte_col = vim.fn.col('.')
     local line = vim.api.nvim_get_current_line()
@@ -246,10 +246,22 @@ M.open = function(text)
     end
 end
 
+---Returns the file path under the cursor, joining multiline table cells when applicable.
+---Falls back to `<cfile>`.
+---@return string
+---@usage `vim.keymap.set('n', 'gf', function() vim.cmd('edit ' .. require('open').file_under_cursor()) end)`
+M.file_under_cursor = function()
+    local cell_text = M.extract_table_cell_text()
+    if cell_text and #cell_text > 0 then
+        return cell_text
+    end
+    return vim.fn.expand('<cfile>')
+end
+
 ---Alias for open.open(vim.fn.expand('<cWORD>'))
 ---@usage `vim.keymap.set('n', 'gx', require('open').open_cword)`
 M.open_cword = function()
-    local cell_text = extract_table_cell_text()
+    local cell_text = M.extract_table_cell_text()
     if cell_text and try_open(cell_text) then
         return
     end
